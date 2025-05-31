@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { VocabularyEntry } from '@/lib/types';
+import { Database } from '@/lib/database.types';
+
+type Vocabulary = Database['public']['Tables']['vocabulary']['Row']
 
 const FEEDBACK = [
     "Great job!",
@@ -13,7 +15,7 @@ const FEEDBACK = [
 ];
 
 interface TranslationExerciseProps {
-    vocabulary: VocabularyEntry;
+    vocabulary: Vocabulary;
     targetLanguage: string;
     onComplete: () => void;
     onBack: () => void;
@@ -33,21 +35,24 @@ export default function TranslationExercise({ vocabulary, targetLanguage, onComp
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (checkAnswer(userInput, vocabulary.answer)) {
+        if (checkAnswer(userInput, vocabulary.answers)) {
             setIsCorrect(true);
             setFeedback(FEEDBACK[Math.floor(Math.random() * FEEDBACK.length)]);
+            setUserInput('');
             setTimeout(() => {
                 onComplete();
             }, 1500);
         } else {
             setRetries(prev => prev + 1);
             if (retries >= 2) {
-                setFeedback(`The correct answer is: ${vocabulary.answer[0]}`);
+                setFeedback(`The correct answer is: ${vocabulary.answers[0]}`);
+                setUserInput('');
                 setTimeout(() => {
                     onComplete();
                 }, 2000);
             } else {
                 setFeedback('Try again!');
+                setUserInput('');
             }
         }
     };
@@ -74,16 +79,9 @@ export default function TranslationExercise({ vocabulary, targetLanguage, onComp
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)}
                     className="block w-full rounded-lg bg-[#064E3B] border border-[#047857] text-white placeholder-gray-300 px-4 py-3 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition-colors duration-200"
-                    placeholder="Type your answer..."
+                    placeholder="Type your answer and press Enter..."
                     disabled={isCorrect}
                 />
-                <button
-                    type="submit"
-                    disabled={isCorrect}
-                    className="w-full px-4 py-3 text-sm font-medium text-white bg-[#059669] hover:bg-[#047857] rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    Check Answer
-                </button>
             </form>
             {feedback && (
                 <p className={`mt-4 text-sm ${isCorrect ? 'text-[#A7F3D0]' : 'text-red-300'}`}>

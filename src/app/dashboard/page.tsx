@@ -3,39 +3,17 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
-import { Course, Lesson } from '@/lib/types'
+import { CourseWithLessons } from '@/lib/course-service'
+import { getCourse } from '@/lib/course-service'
 import LessonCard from '@/components/LessonCard'
 import TranslationExercise from '@/components/TranslationExercise'
 
-// Sample course data - in a real app, this would come from your database
-const sampleCourse: Course = {
-    course_id: 1,
-    course_slug: "en-pt-1",
-    course: "English for Poets",
-    origin_language: "English",
-    target_language: "Portuguese",
-    description: "English for Poets is a beginner-friendly course designed to help you express yourself",
-    lessons: [
-        {
-            lesson_id: 1,
-            title: "Basic Pronouns",
-            topic: "Personal pronouns",
-            preface: "Welcome to Lesson 1 of English for Poets. In this lesson, we'll begin with basic sentence structures using pronouns.",
-            postface: "Well done! You've completed Lesson 1. Now you can use basic pronouns to form sentences in Portuguese.",
-            vocabulary: [
-                { expression: "I am", answer: ["eu sou", "eu estou"] },
-                { expression: "You are", answer: ["você é", "você está"] },
-                { expression: "He is", answer: ["ele é", "ele está"] },
-                { expression: "She is", answer: ["ela é", "ela está"] },
-            ],
-        },
-    ],
-}
-
 export default function Dashboard() {
     const [user, setUser] = useState<any>(null)
-    const [currentLesson, setCurrentLesson] = useState<Lesson | null>(null)
+    const [course, setCourse] = useState<CourseWithLessons | null>(null)
+    const [currentLesson, setCurrentLesson] = useState<CourseWithLessons['lessons'][0] | null>(null)
     const [currentVocabularyIndex, setCurrentVocabularyIndex] = useState(0)
+    const [loading, setLoading] = useState(true)
     const router = useRouter()
     const supabase = createClient()
 
@@ -46,6 +24,10 @@ export default function Dashboard() {
                 router.push('/')
             } else {
                 setUser(user)
+                // Load course data
+                const courseData = await getCourse('en-pt-1')
+                setCourse(courseData)
+                setLoading(false)
             }
         }
         getUser()
@@ -57,7 +39,8 @@ export default function Dashboard() {
     }
 
     const handleStartLesson = (lessonId: number) => {
-        const lesson = sampleCourse.lessons.find(l => l.lesson_id === lessonId)
+        if (!course) return
+        const lesson = course.lessons.find(l => l.id === lessonId)
         if (lesson) {
             setCurrentLesson(lesson)
             setCurrentVocabularyIndex(0)
@@ -78,8 +61,12 @@ export default function Dashboard() {
         setCurrentVocabularyIndex(0)
     }
 
-    if (!user) {
+    if (!user || loading) {
         return <div className="min-h-screen bg-[#064E3B] text-white flex items-center justify-center">Loading...</div>
+    }
+
+    if (!course) {
+        return <div className="min-h-screen bg-[#064E3B] text-white flex items-center justify-center">Course not found</div>
     }
 
     return (
@@ -89,7 +76,7 @@ export default function Dashboard() {
                     <div className="flex justify-between items-center">
                         <div>
                             <h3 className="text-xl font-semibold text-white">
-                                Welcome to {sampleCourse.course}
+                                Welcome to {course.title}
                             </h3>
                             <div className="mt-2 text-sm text-gray-200">
                                 <p>You are signed in as {user.email}</p>
@@ -107,16 +94,16 @@ export default function Dashboard() {
                 {currentLesson ? (
                     <TranslationExercise
                         vocabulary={currentLesson.vocabulary[currentVocabularyIndex]}
-                        targetLanguage={sampleCourse.target_language}
+                        targetLanguage={course.target_language}
                         onComplete={handleExerciseComplete}
                         onBack={handleBackToLessons}
                     />
                 ) : (
                     <div>
                         <h2 className="text-2xl font-bold text-white mb-6">Available Lessons</h2>
-                        {sampleCourse.lessons.map(lesson => (
+                        {course.lessons.map(lesson => (
                             <LessonCard
-                                key={lesson.lesson_id}
+                                key={lesson.id}
                                 lesson={lesson}
                                 onStart={handleStartLesson}
                             />
