@@ -16,9 +16,10 @@ interface TranslationExerciseProps {
     vocabulary: VocabularyEntry;
     targetLanguage: string;
     onComplete: () => void;
+    onBack: () => void;
 }
 
-export default function TranslationExercise({ vocabulary, targetLanguage, onComplete }: TranslationExerciseProps) {
+export default function TranslationExercise({ vocabulary, targetLanguage, onComplete, onBack }: TranslationExerciseProps) {
     const [userInput, setUserInput] = useState('');
     const [feedback, setFeedback] = useState('');
     const [isCorrect, setIsCorrect] = useState(false);
@@ -52,8 +53,19 @@ export default function TranslationExercise({ vocabulary, targetLanguage, onComp
     };
 
     return (
-        <div className="bg-white shadow rounded-lg p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+        <div className="bg-[#065F46] rounded-2xl p-6 border border-[#047857]">
+            <div className="flex justify-between items-center mb-6">
+                <button
+                    onClick={onBack}
+                    className="flex items-center text-white hover:text-[#A7F3D0] transition-colors duration-200"
+                >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Back to Lessons
+                </button>
+            </div>
+            <h3 className="text-xl font-medium text-white mb-6">
                 How do you say "{vocabulary.expression}" in {targetLanguage}?
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -61,20 +73,20 @@ export default function TranslationExercise({ vocabulary, targetLanguage, onComp
                     type="text"
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)}
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="block w-full rounded-lg bg-[#064E3B] border border-[#047857] text-white placeholder-gray-300 px-4 py-3 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition-colors duration-200"
                     placeholder="Type your answer..."
                     disabled={isCorrect}
                 />
                 <button
                     type="submit"
                     disabled={isCorrect}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                    className="w-full px-4 py-3 text-sm font-medium text-white bg-[#059669] hover:bg-[#047857] rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     Check Answer
                 </button>
             </form>
             {feedback && (
-                <p className={`mt-4 text-sm ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+                <p className={`mt-4 text-sm ${isCorrect ? 'text-[#A7F3D0]' : 'text-red-300'}`}>
                     {feedback}
                 </p>
             )}

@@ -7,15 +7,15 @@ interface LessonCardProps {
 
 export default function LessonCard({ lesson, onStart }: LessonCardProps) {
     return (
-        <div className="bg-white shadow rounded-lg p-6 mb-4">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+        <div className="bg-[#065F46] rounded-2xl p-6 mb-4 border border-[#047857] hover:border-[#059669] transition-colors duration-200">
+            <h3 className="text-xl font-semibold text-white mb-2">
                 Lesson {lesson.lesson_id}: {lesson.title}
             </h3>
-            <p className="text-sm text-gray-500 mb-2">Topic: {lesson.topic}</p>
-            <p className="text-gray-700 mb-4">{lesson.preface}</p>
+            <p className="text-sm text-[#A7F3D0] mb-2">Topic: {lesson.topic}</p>
+            <p className="text-gray-200 mb-4">{lesson.preface}</p>
             <button
                 onClick={() => onStart(lesson.lesson_id)}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="px-4 py-2 text-sm font-medium text-white bg-[#059669] hover:bg-[#047857] rounded-lg transition-colors duration-200"
             >
                 Start Lesson
             </button>
