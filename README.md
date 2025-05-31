@@ -1,7 +1,7 @@
 # Sophie's Tree
 
 Sophie's Tree is a language learning application built with Next.js and Supabase, designed to help users learn languages through interactive exercises and structured courses.
-
+ 
 ## Features
 
 - **Course-based Learning**: Structured courses with lessons and vocabulary exercises
