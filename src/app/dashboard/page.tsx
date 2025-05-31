@@ -8,9 +8,10 @@ import { getCourse } from '@/lib/course-service'
 import LessonCard from '@/components/LessonCard'
 import TranslationExercise from '@/components/TranslationExercise'
 import SuccessScreen from '@/components/SuccessScreen'
+import { User } from '@supabase/supabase-js'
 
 export default function Dashboard() {
-    const [user, setUser] = useState<any>(null)
+    const [user, setUser] = useState<User | null>(null)
     const [course, setCourse] = useState<CourseWithLessons | null>(null)
     const [currentLesson, setCurrentLesson] = useState<CourseWithLessons['lessons'][0] | null>(null)
     const [currentVocabularyIndex, setCurrentVocabularyIndex] = useState(0)

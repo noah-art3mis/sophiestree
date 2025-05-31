@@ -82,7 +82,7 @@ export default function TranslationExercise({ vocabulary, targetLanguage, onComp
                 </button>
             </div>
             <h3 className="text-xl font-medium text-white mb-6">
-                How do you say "{vocabulary.expression}" in {targetLanguage}?
+                How do you say &ldquo;{vocabulary.expression}&rdquo; in {targetLanguage}?
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <input

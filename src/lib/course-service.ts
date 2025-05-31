@@ -35,12 +35,10 @@ export async function getCourse(slug: string): Promise<CourseWithLessons | null>
     // Get vocabulary for each lesson
     const lessonsWithVocabulary = await Promise.all(
         lessons.map(async (lesson) => {
-            const { data: vocabulary, error: vocabError } = await supabase
+            const { data: vocabulary } = await supabase
                 .from('vocabulary')
                 .select('*')
                 .eq('lesson_id', lesson.id)
-
-            if (vocabError) return { ...lesson, vocabulary: [] }
 
             return {
                 ...lesson,
