@@ -66,7 +66,7 @@ export async function getLesson(lessonId: number): Promise<(Lesson & { vocabular
     if (lessonError || !lesson) return null
 
     // Get vocabulary
-    const { data: vocabulary, error: vocabError } = await supabase
+    const { data: vocabulary } = await supabase
         .from('vocabulary')
         .select('*')
         .eq('lesson_id', lesson.id)

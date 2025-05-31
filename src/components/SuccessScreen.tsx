@@ -13,7 +13,7 @@ export default function SuccessScreen({ onBack }: SuccessScreenProps) {
                 </svg>
             </div>
             <h2 className="text-2xl font-bold text-white mb-4">Lesson Completed!</h2>
-            <p className="text-gray-200 mb-8">Great job! You've completed all the exercises in this lesson.</p>
+            <p className="text-gray-200 mb-8">Great job! You&apos;ve completed all the exercises in this lesson.</p>
             <button
                 onClick={onBack}
                 className="px-6 py-3 bg-[#059669] hover:bg-[#047857] text-white font-medium rounded-lg transition-colors duration-200"

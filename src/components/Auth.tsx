@@ -11,8 +11,7 @@ export default function Auth() {
     const router = useRouter()
     const supabase = createClient()
 
-    const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+    const handleSignUp = async () => {
         try {
             setLoading(true)
             const { error } = await supabase.auth.signUp({
@@ -22,14 +21,17 @@ export default function Auth() {
             if (error) throw error
             alert('Check your email for the confirmation link!')
         } catch (error) {
-            alert(error.message)
+            if (error instanceof Error) {
+                alert(error.message)
+            } else {
+                alert('An unexpected error occurred')
+            }
         } finally {
             setLoading(false)
         }
     }
 
-    const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+    const handleSignIn = async () => {
         try {
             setLoading(true)
             const { error } = await supabase.auth.signInWithPassword({
@@ -39,7 +41,11 @@ export default function Auth() {
             if (error) throw error
             router.push('/dashboard')
         } catch (error) {
-            alert(error.message)
+            if (error instanceof Error) {
+                alert(error.message)
+            } else {
+                alert('An unexpected error occurred')
+            }
         } finally {
             setLoading(false)
         }
@@ -50,10 +56,10 @@ export default function Auth() {
             <div className="w-full max-w-md space-y-8">
                 <div>
                     <h2 className="mt-6 text-3xl font-bold text-center text-white">
-                        Welcome to Sophie's Tree
+                        Welcome to Sophie&apos;s Tree
                     </h2>
                 </div>
-                <form className="mt-8 space-y-6">
+                <form className="mt-8 space-y-6" onSubmit={(e) => e.preventDefault()}>
                     <div className="space-y-4 rounded-md shadow-sm">
                         <div>
                             <label htmlFor="email" className="sr-only">
@@ -89,7 +95,7 @@ export default function Auth() {
 
                     <div className="flex flex-col space-y-4">
                         <button
-                            type="submit"
+                            type="button"
                             onClick={handleSignIn}
                             disabled={loading}
                             className="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-[#059669] border border-transparent rounded-md group hover:bg-[#047857] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#059669]"
@@ -97,7 +103,7 @@ export default function Auth() {
                             {loading ? 'Loading...' : 'Sign In'}
                         </button>
                         <button
-                            type="submit"
+                            type="button"
                             onClick={handleSignUp}
                             disabled={loading}
                             className="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-[#065F46] border border-[#047857] rounded-md group hover:bg-[#064E3B] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#059669]"
