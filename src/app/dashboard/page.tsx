@@ -7,6 +7,7 @@ import { CourseWithLessons } from '@/lib/course-service'
 import { getCourse } from '@/lib/course-service'
 import LessonCard from '@/components/LessonCard'
 import TranslationExercise from '@/components/TranslationExercise'
+import SuccessScreen from '@/components/SuccessScreen'
 
 export default function Dashboard() {
     const [user, setUser] = useState<any>(null)
@@ -14,6 +15,7 @@ export default function Dashboard() {
     const [currentLesson, setCurrentLesson] = useState<CourseWithLessons['lessons'][0] | null>(null)
     const [currentVocabularyIndex, setCurrentVocabularyIndex] = useState(0)
     const [loading, setLoading] = useState(true)
+    const [showSuccess, setShowSuccess] = useState(false)
     const router = useRouter()
     const supabase = createClient()
 
@@ -44,6 +46,7 @@ export default function Dashboard() {
         if (lesson) {
             setCurrentLesson(lesson)
             setCurrentVocabularyIndex(0)
+            setShowSuccess(false)
         }
     }
 
@@ -51,14 +54,14 @@ export default function Dashboard() {
         if (currentLesson && currentVocabularyIndex < currentLesson.vocabulary.length - 1) {
             setCurrentVocabularyIndex(prev => prev + 1)
         } else {
-            setCurrentLesson(null)
-            setCurrentVocabularyIndex(0)
+            setShowSuccess(true)
         }
     }
 
     const handleBackToLessons = () => {
         setCurrentLesson(null)
         setCurrentVocabularyIndex(0)
+        setShowSuccess(false)
     }
 
     if (!user || loading) {
@@ -92,12 +95,20 @@ export default function Dashboard() {
                 </div>
 
                 {currentLesson ? (
-                    <TranslationExercise
-                        vocabulary={currentLesson.vocabulary[currentVocabularyIndex]}
-                        targetLanguage={course.target_language}
-                        onComplete={handleExerciseComplete}
-                        onBack={handleBackToLessons}
-                    />
+                    showSuccess ? (
+                        <SuccessScreen onBack={handleBackToLessons} />
+                    ) : currentLesson.vocabulary && currentLesson.vocabulary.length > 0 ? (
+                        <TranslationExercise
+                            vocabulary={currentLesson.vocabulary[currentVocabularyIndex]}
+                            targetLanguage={course.target_language}
+                            onComplete={handleExerciseComplete}
+                            onBack={handleBackToLessons}
+                        />
+                    ) : (
+                        <div className="bg-[#065F46] rounded-2xl p-6 border border-[#047857] text-white">
+                            No vocabulary items available for this lesson.
+                        </div>
+                    )
                 ) : (
                     <div>
                         <h2 className="text-2xl font-bold text-white mb-6">Available Lessons</h2>

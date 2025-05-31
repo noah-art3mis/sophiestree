@@ -15,7 +15,7 @@ const sampleCourse = {
     title: "English for Poets",
     origin_language: "English",
     target_language: "Portuguese",
-    description: "English for Poets is a beginner-friendly course designed to help you express yourself",
+    description: "A course designed to help poets express themselves in Portuguese, focusing on poetic language and creative expression",
     lessons: [
         {
             title: "Basic Pronouns",

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Database } from '@/lib/database.types';
 
 type Vocabulary = Database['public']['Tables']['vocabulary']['Row']
@@ -26,6 +26,17 @@ export default function TranslationExercise({ vocabulary, targetLanguage, onComp
     const [feedback, setFeedback] = useState('');
     const [isCorrect, setIsCorrect] = useState(false);
     const [retries, setRetries] = useState(0);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    // Reset states when vocabulary changes
+    useEffect(() => {
+        setIsCorrect(false);
+        setFeedback('');
+        setUserInput('');
+        setRetries(0);
+        // Focus input when vocabulary changes
+        inputRef.current?.focus();
+    }, [vocabulary]);
 
     const checkAnswer = (input: string, answers: string[]): boolean => {
         const normalizedInput = input.trim().toLowerCase();
@@ -39,22 +50,22 @@ export default function TranslationExercise({ vocabulary, targetLanguage, onComp
             setIsCorrect(true);
             setFeedback(FEEDBACK[Math.floor(Math.random() * FEEDBACK.length)]);
             setUserInput('');
-            setTimeout(() => {
-                onComplete();
-            }, 1500);
+            onComplete();
         } else {
             setRetries(prev => prev + 1);
             if (retries >= 2) {
                 setFeedback(`The correct answer is: ${vocabulary.answers[0]}`);
                 setUserInput('');
-                setTimeout(() => {
-                    onComplete();
-                }, 2000);
+                onComplete();
             } else {
                 setFeedback('Try again!');
                 setUserInput('');
             }
         }
+        // Focus input after every submission
+        setTimeout(() => {
+            inputRef.current?.focus();
+        }, 0);
     };
 
     return (
@@ -75,12 +86,14 @@ export default function TranslationExercise({ vocabulary, targetLanguage, onComp
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <input
+                    ref={inputRef}
                     type="text"
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)}
                     className="block w-full rounded-lg bg-[#064E3B] border border-[#047857] text-white placeholder-gray-300 px-4 py-3 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition-colors duration-200"
                     placeholder="Type your answer and press Enter..."
                     disabled={isCorrect}
+                    autoFocus
                 />
             </form>
             {feedback && (
